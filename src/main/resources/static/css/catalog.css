@@ -1,0 +1,19 @@
+
+.left-block{
+    width: 30%;
+    height: 100%;
+    float: left;
+    overflow: auto;
+}
+
+.right-block{
+    padding: 20px;
+    width: 70%;
+    height: 100%;
+    float: left;
+}
+@media screen and (max-width: 768px){
+    #navbar-catalog{
+        padding: 0;
+    }
+}

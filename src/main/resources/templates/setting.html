@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>设置</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/setting.css">
+</head>
+<body>
+<hr>
+<h1 id="reader">阅读设置</h1>
+<br>
+<br>
+<div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon2">自动保存阅读设置</span>
+        </div>
+        <input onchange="save(this.id)" th:checked="${ras eq '1'}" id="read-auto-save" type="checkbox" class="form-control" aria-label="Username" aria-describedby="basic-addon2">
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon3">预缓存章数</span>
+        </div>
+        <input onchange="save(this.id)" id="buffer-chapter" type="number" class="form-control" th:value="${bufferChapter}" aria-label="Username" aria-describedby="basic-addon3">
+    </div>
+    <a href="/setting/clear-buffer"><button>清除缓存</button></a>
+</div>
+<hr>
+<h1 id="download">爬虫下载设置</h1>
+<br>
+<br>
+<div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="basic-addon1">下载线程数</span>
+        </div>
+        <input onchange="save(this.id)" id="downer" type="number" class="form-control" th:value="${downer}" aria-label="Username" aria-describedby="basic-addon1">
+    </div>
+    <div class="input-group mb-3">
+        <div class="input-group-prepend">
+            <span class="input-group-text" id="inputGroupFileAddon01">下载位置</span>
+        </div>
+        <input onchange="save(this.id)" class="form-control" th:value="${folder}" id="folder" aria-describedby="inputGroupFileAddon01">
+    </div>
+</div>
+
+
+<script src="/js/setting.js"></script>
+</body>
+</html>

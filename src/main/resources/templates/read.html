@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${chapter.title}"></title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/read.css">
+</head>
+<body th:style="'background-color:'+${dbc}">
+<input style="display: none" id="preChapter" th:value="${preChapter}">
+<input style="display: none" id="prePos" th:value="${prePos}">
+<input style="display: none" id="buffer-chapter" th:value="${bufferChapter}">
+<input type="checkbox" th:checked="${ras eq '1'}" style="display: none" id="ras">
+<div id="id" th:text="${id}" style="display: none"></div>
+<div id="catalog-block" class="doc-left block-color catalog-out">
+    <h2>目录</h2>
+    <div id="catalog" class="list-group">
+        <a th:each="cp, itrStat:${chapters}" th:id="${'catalog-'+itrStat.index}" th:target="${num==itrStat.index? '_self':'_blank'}" th:text="${cp.title}" th:href="${num==itrStat.index? '#chapter-'+itrStat.index:'/parse/content?id='+id+'&num='+itrStat.index}" th:class="${num==itrStat.index? 'list-group-item list-group-item-action list-group-item-success active':'list-group-item list-group-item-action' }">第一章</a>
+    </div>
+</div>
+<div id="read-block"  th:style="'font-size:'+${fontSize}+'px; color:'+${dfc}">
+    <div th:id="${'chapter-'+num}">
+        <br>
+        <h2 th:text="${chapter.title}">第一章</h2>
+        <br>
+        <hr>
+        <div class="content" th:utext="${content}"></div>
+    </div>
+</div>
+<div class="doc-bottom nav-block block-color out" id="setting-pane">
+    <div class="control-block row m-2">
+        <div class="btn-group w-auto m-auto" role="group" aria-label="Basic example">
+
+            <button type="button" class="btn btn-light" onclick="gotoPage(-1)">上一章</button>
+            <button type="button" class="btn btn-light" onclick="showCatalog()">目录</button>
+            <a href="/setting/" target="_blank"><button type="button" class="btn btn-light" onclick="gotoPage(1)">设置</button></a>
+            <button type="button" class="btn btn-light" onclick="gotoPage(1)">下一章</button>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="input-group m-auto w-auto">
+            <div class="input-group-prepend">
+                <span class="input-group-text">字体大小</span>
+                <button onclick="changeFontSize(parseInt(document.getElementById('fs').value)+1)" class="btn btn-light" type="button">+</button>
+            </div>
+            <input id="fs" onchange="changeFontSize(this.value)" th:value="${fontSize}" type="text" class="input-group-text" placeholder="" aria-label="Example text with button addon" aria-describedby="button-addon1">
+            <div class="input-group-append">
+                <button onclick="changeFontSize(parseInt(document.getElementById('fs').value)-1)" class="btn btn-light" type="button">-</button>
+            </div>
+        </div>
+    </div>
+    <div class="row m-2">
+        <div class="input-group m-auto w-auto">
+            <div class="input-group-prepend">
+                <span class="input-group-text">背景颜色</span>
+            </div>
+            <input id="bc" onchange="changeBackgroundColor(this.value)" th:value="${dbc}" type="text" class="input-group-text" placeholder="" aria-label="Example text with button addon">
+        </div>
+    </div>
+
+    <div class="color-block">
+        <ul id="bc-color">
+            <li th:each="bcColor:${bcColors}">
+                <div class="color-display" th:style="${'background-color:'+bcColor}" th:attr="data-color=${bcColor}" onclick="changeBackgroundColor(this.getAttribute('data-color'))"></div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="row m-2">
+        <div class="input-group m-auto w-auto">
+            <div class="input-group-prepend">
+                <span class="input-group-text">字体颜色</span>
+            </div>
+            <input id="fc" onchange="changeFontColor(this.value)" th:value="${dfc}" type="text" class="input-group-text" placeholder="" aria-label="Example text with button addon">
+        </div>
+    </div>
+    <div class="color-block">
+        <ul id="fc-color">
+            <li th:each="fcColor:${fcColors}">
+                <div class="color-display" th:style="${'background-color:'+fcColor}" th:attr="data-color=${fcColor}" onclick="changeFontColor(this.getAttribute('data-color'))"></div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script src="/js/tool/list.js"></script>
+<script src="/js/sweet-alert.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/read.js"></script>
+</body>
+</html>

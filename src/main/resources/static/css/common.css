@@ -1,0 +1,55 @@
+
+html, body{
+    height: 100%;
+    width: 100%;
+    margin: auto;
+    padding: 0;
+}
+body{
+    width: 60%;
+    max-width: 1200px;
+}
+
+@media screen and (max-width: 1200px){
+    body{
+        width: 80%;
+    }
+}
+@media screen and (max-width: 992px){
+    body{
+        width: 85%;
+    }
+}
+@media screen and (max-width: 768px){
+    h4{
+        font-size: 14px;
+        margin: 7px;
+    }
+    body{
+        width: 90%;
+    }
+}
+
+
+*{
+    transition-duration: 1s;
+}
+
+.doc-center{
+    position: absolute;
+    left: 50%;
+    top: 40%;
+    transform: translateX(-50%) translateY(-50%);
+}
+.doc-bottom{
+    position: fixed;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+}
+.doc-left{
+    position: fixed;
+    left: 0;
+    top:0;
+    height: 100%;
+}

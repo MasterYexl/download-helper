@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${book.name}"></title>
+    <link rel="stylesheet" href="/css/bootstrap.css">
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/catalog.css">
+</head>
+<body>
+<div id="id" th:text="${id}" style="display: none"></div>
+<input id="inShelf" th:value="${inShelf}" style="display: none">
+<div class="jumbotron left-block">
+    <h1 th:text="${book.name}">标题</h1>
+    <a th:href="${'/download/'+id+'?downer='+downer}"><button class="btn btn-info">下载全文</button></a>
+    <button id="bookshelf" class="btn btn-info" onclick="addToBookshelf()" th:text="${inShelf? '移出书架':'加入书架'}">加入书架</button>
+    <a href="/setting/#download" target="_blank"><button>下载设置</button></a>
+<!--    <ul>-->
+<!--        <li th:each="champter, itrStat:${book.chapters}">-->
+<!--            <a target="_blank" th:text="${champter.title}" th:href="${'/parse/content?id='+id+'&num='+itrStat.index}"></a>-->
+<!--        </li>-->
+<!--    </ul>-->
+    <nav id="navbar-catalog" class="navbar navbar-light bg-light">
+        <nav class="nav nav-pills flex-column">
+            <a th:each="i:${#numbers.sequence(0,10)}" class="nav-link" th:href="${'#champter-'+i*book.chapters.size()/10}" th:text="${'第'+(i*book.chapters.size()/10+1)+'章'}">Item 1</a>
+        </nav>
+    </nav>
+<!--    <div id="navbar-example3" class="list-group">-->
+<!--        <a th:each="i:${#numbers.sequence(0,10)}" class="list-group-item list-group-item-action" th:href="${'#champter-'+i*book.chapters.size()/10}" th:text="${'第'+(i*book.chapters.size()/10+1)+'章'}">Item 1</a>-->
+<!--    </div>-->
+</div>
+<div class="overflow-auto right-block" data-spy="scroll" data-target="#navbar-catalog" data-offset="0">
+    <div th:if="${book.readingChapter} ne -1">
+        <h4>上次阅读</h4>
+        <hr>
+        <h4>
+            <a th:id="${'champter-'+book.readingChapter}" target="_blank" th:text="${book.chapters.get(book.readingChapter).title}" th:href="${'/parse/content?id='+id+'&num='+book.readingChapter}"></a>
+        </h4>
+        <hr>
+    </div>
+    <h4 th:each="champter, itrStat:${book.chapters}">
+        <a th:id="${'champter-'+itrStat.index}" target="_blank" th:text="${champter.title}" th:href="${'/parse/content?id='+id+'&num='+itrStat.index}"></a>
+    </h4>
+</div>
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.js"></script>
+<script src="/js/common.js"></script>
+<script src="/js/catalog.js"></script>
+</body>
+</html>

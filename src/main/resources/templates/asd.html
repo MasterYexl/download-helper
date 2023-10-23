@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ul li 横排居中</title>
+    <style>
+        body{
+            position: relative;
+        }
+        #list-example{
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 30%;
+        }
+        .scrollspy-example{
+            float: right;
+            width: 40%;
+        }
+    </style>
+    <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+</head>
+<body>
+<div id="list-example" class="list-group">
+    <a class="list-group-item list-group-item-action" href="#list-item-1">Item 1</a>
+    <a class="list-group-item list-group-item-action" href="#list-item-2">Item 2</a>
+    <a class="list-group-item list-group-item-action" href="#list-item-3">Item 3</a>
+    <a class="list-group-item list-group-item-action" href="#list-item-4">Item 4</a>
+</div>
+<div data-spy="scroll" data-target="#list-example" data-offset="0" class="scrollspy-example">
+    <h4 id="list-item-1">Item 1</h4>
+    <p><br><br><br><br><br><br><br><br><br><br><br></p>
+    <h4 id="list-item-2">Item 2</h4>
+    <p>.<br><br><br><br><br><br><br><br><br><br><br></p>
+    <h4 id="list-item-3">Item 3</h4>
+    <p><br><br><br><br><br><br><br><br><br><br><br></p>
+    <h4 id="list-item-4">Item 4</h4>
+    <p><br><br><br><br><br><br><br><br><br><br><br></p>
+</div>
+
+
+<script src="../static/js/jquery.min.js"></script>
+<script src="../static/js/bootstrap.bundle.js"></script>
+</body>
+</html>

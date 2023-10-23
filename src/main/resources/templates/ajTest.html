@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <script>
+
+        function send(account, password){
+            let xmlhttp;
+            if (window.XMLHttpRequest)
+            {
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.open("GET","/get?account="+account+"&password="+password,true);
+            xmlhttp.send();
+        }
+    </script>
+
+</head>
+<body>
+    <input id="account">
+<input id="password">
+    <button onclick="send(document.getElementById('account').value,document.getElementById('password').value)">提交</button>
+</body>
+</html>

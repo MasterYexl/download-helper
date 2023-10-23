@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        html,body{
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div>
+        <input id="test-v" placeholder="初速度" value="10">
+        <input id="test-radius" placeholder="抛射角" value="50">
+        <input id="test-time" placeholder="时间" value="0">
+        <button onclick="start(document.getElementById('ball-1'))">开始模拟</button>
+    </div>
+    <div style="position: fixed; left: 50%" class="ball" id="ball-1">*</div>
+    <i class="bi-star-fill"></i>
+
+<script src = "paotiTest.js"></script>
+<script src="test.js"></script>
+</body>
+</html>

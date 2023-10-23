@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <script>
+        let max = 0;
+
+        function found(str) {
+            return foundMax(str, 0, str.length, 0);
+        }
+        function foundMax(str, start, end, max) {
+            if (start >= end) {
+                return max;
+            }
+            if (end > str.length || start < 0) {
+                return max;
+            }
+            let repeatPosition = haveRepeatChar(str, start, end);
+            max = Math.max(repeatPosition - start, max);
+            if (repeatPosition !== -1) {
+                if (max < end - repeatPosition) {
+                    max = Math.max(max, foundMax(str, repeatPosition, end, max));
+                }
+            }
+            else {
+                return end - start;
+            }
+            return max;
+        }
+        function haveRepeatChar(str, start, end) {
+            for (let i = start; i < end; i++) {
+                let c = str[i];
+                for (let j = i + 1; j < end; j++) {
+                    if (c === str[j])
+                        return j;
+                }
+            }
+            return -1;
+        }
+
+
+        function foundMax2(str) {
+            let max = 0;
+            let dic = {};
+            let left = -1;
+            for (let i = 0; i < str.length; i++) {
+                let c = str[i];
+                if (dic[c] !== undefined) {
+                    left = Math.max(dic[c], left);
+                }
+                max = Math.max(max, i - left);
+                dic[c] = i;
+            }
+            return max;
+        }
+
+        function getPlus(str) {
+
+        }
+
+
+    </script>
+</body>
+</html>

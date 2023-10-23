@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>书架</title>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/common.css">
+</head>
+<body>
+<div th:each="book, itrState:${bookList}" class="card text-center">
+    <div class="card-body">
+        <form method="post" action="/parse/catalog" target="_blank">
+            <h5 class="card-title" th:text="${book.name}">书名</h5>
+            <input name="url" th:value="${book.url}" style="display: none">
+            <a th:href="${'/parse/open?index='+itrState.index}">
+                <p class="card-text">点击继续阅读</p>
+            </a>
+
+            <input class="btn btn-primary" type="submit" value="进入目录">
+        </form>
+    </div>
+</div>
+
+
+<script src="/js/jquery.min.js"></script>
+<script src="/js/bootstrap.bundle.js"></script>
+<script src="/js/common.js"></script>
+</body>
+</html>

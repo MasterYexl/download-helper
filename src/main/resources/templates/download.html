@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="zh-CN"  xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>下载进度</title>
+    <link rel="stylesheet" href="/css/common.css">
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/download.css">
+</head>
+<body>
+    <span th:text="${id}" id="number" style="display: none"></span>
+    <div id="progress-data">
+        <div id="progress-info"></div>
+    </div>
+    <div id="over-down" style="display: none" class="doc-center">
+        <div>
+            <h1>下载完成</h1>
+            <br>
+            <br>
+            <a target="_blank" th:href="${'/download/open?id='+id}"><button class="btn btn-info">本地打开</button></a>
+            <a target="_blank"><button class="btn btn-info">浏览器打开</button></a>
+            <a th:href="${'/download/copy?id='+id}"><button class="btn btn-info">浏览器下载</button></a>
+        </div>
+
+    </div>
+
+
+<script src="/js/download.js"></script>
+</body>
+</html>
