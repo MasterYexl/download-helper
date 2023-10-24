@@ -117,6 +117,10 @@ public class Worker<D, R> extends Thread {
         this.successFunction = successFunction;
     }
 
+    public void setTaskFunction(Function<D, R> taskFunction) {
+        this.taskFunction = taskFunction;
+    }
+
     public Task<D, R> getCurrentTask() {
         return currentTask;
     }

@@ -104,8 +104,4 @@ public class SearchController {
         stringBuilder.append("]");
         return stringBuilder.toString();
     }
-    @Test
-    public void jsonTest(){
-        System.out.println(searchBook("斗罗大陆"));
-    }
 }

@@ -52,10 +52,6 @@ public class BookSearch {
         return spider.search(nowSearch + " 全文 txt 下载", answersLength, answersLength);
     }
 
-
-    /*
-    https://www.15xs.com/down/txt/32294/我是猫.txt
-     */
     public String getDownloadLink(String url) throws IOException {
         Element element = spider.getElement(url);
         Elements a = element.select("a");
@@ -63,29 +59,8 @@ public class BookSearch {
             if (link.text().matches("(.*[tT][xX][tT].*)|(.*下载本书.*)")) {
                 if (link.attr("href").contains("down") && link.attr("href").contains("txt")) return link.attr("href");
             }
-//            else System.out.println(link.text());
         }
         return null;
-    }
-
-    @Test
-    public void dlTest() {
-        List<Url> search = null;
-        try {
-            search = searchTxt("美食供应商");
-            for (Url url : search) {
-                System.out.println(url);
-                try {
-                    String link = getDownloadLink(url.getUrl());
-                    if (link != null) System.out.println(link);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
     }
 
     //解析目录
@@ -153,10 +128,6 @@ public class BookSearch {
             return homePage.substring(0, last + 1) + href;
         }
     }
-    @Test
-    public void psTest(){
-        System.out.println(parseHref("https://www.shizongzui.com/", "/qianzhuan/diyijuan/2.html"));
-    }
 
     public String parseTitle(Element page) {
         String name = null;
@@ -190,10 +161,6 @@ public class BookSearch {
         }
         if (content.size() == 0) return "";
         Elements tmp = content.clone();
-//        for (Element real : content) {
-//            if (mostLikely==null||real.text().length()>mostLikely.text().length()) mostLikely = real.getAllElements();
-//            real.children().select("[class~=.+]").remove();
-//        }
         String finalContent = content.text();
         if (finalContent.length() == 0) finalContent = tmp.text();
         String[] analyze = finalContent.split(" ");
@@ -212,16 +179,6 @@ public class BookSearch {
         }
         finalContent = stringBuilder.toString();
         return (html ? "&nbsp&nbsp&nbsp&nbsp" : "       ") + finalContent.replaceAll("\n", html ? "<br />&nbsp&nbsp&nbsp&nbsp" : "\n       ");
-    }
-
-    @Test
-    public void modeTest() {
-        try {
-            String content = parseContent("https://vipreader.qidian.com/chapter/1019490575/524303614");
-            System.out.println(content);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     public String parseContent(String url) throws IOException {
@@ -243,93 +200,6 @@ public class BookSearch {
         }
 
     }
-
-    @Test
-    public void titleTest() {
-//        File file = new File("D:\\YXL\\WorkSpace\\java\\springboot\\download-helper\\src\\main\\java\\com\\yxl\\downloadhelper\\web\\斗罗大陆无弹窗_斗罗大陆最新章节列表_看笔趣阁.html");
-//        Element element = Spider.parseLocalFile(file);
-        List<Url> search = null;
-        try {
-            search = search("末世大回炉");
-            for (Url url : search) {
-                Book book = parseCatalog(url.getUrl());
-                System.out.println(book.getName() + " \n" + url.getTitle() + " " + url.getUrl() + " ");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    public static void main(String[] args) {
-        BookSearch bookSearch = new BookSearch();
-        List<Url> search = null;
-        try {
-            search = bookSearch.search("斗罗大陆");
-            for (Url url : search) {
-                Book book = bookSearch.parseCatalog(url.getUrl());
-                System.out.println(url + "\n是否写入? >");
-                Scanner scanner = new Scanner(System.in);
-                if (scanner.nextLine().equals("y")) {
-                    bookSearch.bookWriter(book);
-                }
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void test() {
-        List<Url> search = null;
-        try {
-            search = search("美食供应商");
-            for (Url url : search) {
-                System.out.println(url);
-                parseCatalog(url.getUrl());
-                System.out.println("\n\n下一个\n\n");
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    @Test
-    public void dialogTest() {
-        try {
-            parseCatalog("http://www.wanjie8.com/files/article/html/2/2689/index.html");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void parseTest() {
-        try {
-            Book book = parseCatalog("https://www.shizongzui.com/");
-            for (Chapter chapter : book.getChapters()){
-                System.out.println(chapter);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Test
-    public void searchTest() {
-        List<Url> list = null;
-        try {
-            list = search("斗罗大陆");
-            for (Url url : list) {
-                System.out.println(url);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
-
 
 }
 

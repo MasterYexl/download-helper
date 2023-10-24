@@ -71,7 +71,6 @@ public class TIO {
         File infoLog = new File(name);
         if (!infoLog.exists()) {
             try {
-                //System.out.println("创建日志文件成功 "+infoLog.getAbsolutePath());
                 infoLog.createNewFile();
                 return infoLog;
             } catch (IOException e) {
@@ -88,7 +87,6 @@ public class TIO {
         }
         if (!infoLog.exists()) {
             try {
-                //System.out.println("创建日志文件成功 "+infoLog.getAbsolutePath());
                 infoLog.createNewFile();
                 return infoLog;
             } catch (IOException e) {

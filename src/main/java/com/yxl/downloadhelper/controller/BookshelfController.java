@@ -56,7 +56,6 @@ public class BookshelfController {
         if (book==null) return "BOOK LIST IS EMPTY";
         book.setReadingChapter(chapter);
         book.setReadingPos(pos);
-//        System.out.println("当前阅读第"+book.getReadingChapter()+"章，位置"+book.getReadingPos());
         bookToObjFile(book, SettingsIO.get("book-path")+File.separator+"bin");
         return "OK";
     }

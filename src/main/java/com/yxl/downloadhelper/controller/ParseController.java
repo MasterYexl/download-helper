@@ -118,8 +118,6 @@ public class ParseController {
         return "error/404";
     }
 
-    //#C7EDCC #CCE8CF #FAF9DE #FFF2E2 #FDE6E0 #E3EDCD #DCE2F1 #EAEAEF #E9EBFE black white gray wheat
-//#002752 gray #0b2e13
     public String pageCanNotParse(String url, String msg, Model model) {
         model.addAttribute("url", url);
         model.addAttribute("msg", msg);

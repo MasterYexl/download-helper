@@ -78,7 +78,6 @@ public class BookShelfIO {
             TIO.write("",libMapPath, false);
             return;
         }
-        //重写HashMap可以省下这步
         s = s.replaceAll(", ","=\n").replace("[","").replace("]","=");
         TIO.write(s, libMapPath, false);
     }

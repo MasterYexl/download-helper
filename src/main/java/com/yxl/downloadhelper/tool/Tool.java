@@ -65,13 +65,4 @@ public class Tool {
         ObjectInputStream ois = new ObjectInputStream(fis);
         return (Book) ois.readObject();
     }
-
-    @Test
-    public void indexTest(){
-        List<String> list = new LinkedList<>();
-        list.add("1234");
-        list.add("www.baidu.com");
-        list.add("yexl");
-        System.out.println(list.indexOf("12"));
-    }
 }
