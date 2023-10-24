@@ -3,7 +3,7 @@ package com.yxl.downloadhelper.controller;
 
 import com.yxl.downloadhelper.conponent.BookShelfIO;
 import com.yxl.downloadhelper.conponent.SettingsIO;
-import com.yxl.downloadhelper.model.Book;
+import com.yxl.downloadhelper.model.book.Book;
 import com.yxl.downloadhelper.tool.Tool;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

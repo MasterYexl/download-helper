@@ -1,4 +1,4 @@
-package com.yxl.downloadhelper.web;
+package com.yxl.downloadhelper.utils.io;
 
 import java.awt.*;
 import java.io.*;

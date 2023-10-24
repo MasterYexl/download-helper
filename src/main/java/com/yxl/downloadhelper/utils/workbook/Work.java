@@ -1,4 +1,4 @@
-package com.yxl.downloadhelper.web;
+package com.yxl.downloadhelper.utils.workbook;
 
 public interface Work {
     int getId();

@@ -1,20 +1,14 @@
 package com.yxl.downloadhelper.controller;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.yxl.downloadhelper.model.Url;
-import com.yxl.downloadhelper.web.BookSearch;
-import com.yxl.downloadhelper.web.DownloadableLinkSearch;
-import com.yxl.downloadhelper.web.WorkBook;
+import com.yxl.downloadhelper.utils.searchengin.BookSearch;
+import com.yxl.downloadhelper.utils.downloader.BookDownloadableLinkSearch;
+import com.yxl.downloadhelper.utils.workbook.Workbook;
 import org.junit.Test;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.net.URI;
-import java.net.URL;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -89,17 +83,16 @@ public class SearchController {
 
     public String getDownloadLink(List<Url> search) throws InterruptedException {
         long time = System.currentTimeMillis();
-        WorkBook<Url,Url> workBook = new WorkBook<>(search);
-        for (int i = 0; i < search.size(); i++) {
-            new DownloadableLinkSearch(workBook).start();
-        }
+        BookDownloadableLinkSearch linkSearch = new BookDownloadableLinkSearch(search);
+        linkSearch.setWorkerNumber(search.size());
+        linkSearch.workStart();
         for (int i = 0; i < 30; i++) {
-            if (workBook.isFinish()) break;
+            if (linkSearch.isFinish()) break;
             System.out.println("主线程：等待完成");
             Thread.sleep(100);
         }
         System.out.println("结束爬取, 用时:"+(System.currentTimeMillis()-time));
-        return urlToJson(workBook.getResult());
+        return urlToJson(linkSearch.getResult());
     }
 
     public String urlToJson(List<Url> urls){

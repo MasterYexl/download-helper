@@ -1,8 +1,8 @@
 package com.yxl.downloadhelper;
 
 import com.yxl.downloadhelper.controller.BookshelfController;
-import com.yxl.downloadhelper.model.Book;
-import com.yxl.downloadhelper.model.Chapter;
+import com.yxl.downloadhelper.model.book.Book;
+import com.yxl.downloadhelper.model.book.Chapter;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 

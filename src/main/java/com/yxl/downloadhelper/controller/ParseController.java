@@ -2,11 +2,11 @@ package com.yxl.downloadhelper.controller;
 
 import com.yxl.downloadhelper.conponent.BookShelfIO;
 import com.yxl.downloadhelper.conponent.SettingsIO;
-import com.yxl.downloadhelper.model.Book;
+import com.yxl.downloadhelper.model.book.Book;
 import com.yxl.downloadhelper.model.BookStore;
-import com.yxl.downloadhelper.model.Chapter;
+import com.yxl.downloadhelper.model.book.Chapter;
 import com.yxl.downloadhelper.tool.Tool;
-import com.yxl.downloadhelper.web.BookSearch;
+import com.yxl.downloadhelper.utils.searchengin.BookSearch;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;

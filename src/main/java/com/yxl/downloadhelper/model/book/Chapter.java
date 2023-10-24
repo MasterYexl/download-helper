@@ -1,10 +1,8 @@
-package com.yxl.downloadhelper.model;
-
-import com.yxl.downloadhelper.web.Work;
+package com.yxl.downloadhelper.model.book;
 
 import java.io.Serializable;
 
-public class Chapter implements Work, Serializable {
+public class Chapter implements Serializable {
     String title;
     String content;
     int number;
@@ -38,13 +36,4 @@ public class Chapter implements Work, Serializable {
         return title + " " + content;
     }
 
-    @Override
-    public int getId() {
-        return number;
-    }
-
-    @Override
-    public void setId(int id) {
-        setNumber(id);
-    }
 }

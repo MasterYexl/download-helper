@@ -29,17 +29,5 @@ public class BookStore {
     public String toString() {
         return url + '=' + name;
     }
-    @Test
-    public void listTest(){
-        List<BookStore> bookstores = new LinkedList<>();
-        BookStore bookstore = new BookStore();
-        bookstore.setName("123");
-        bookstore.setUrl("aaa");
-        BookStore bookstore1 = new BookStore();
-        bookstore1.setName("566");
-        bookstore1.setUrl("vbb");
-        bookstores.add(bookstore);
-        bookstores.add(bookstore1);
-        System.out.println(bookstores);
-    }
+
 }

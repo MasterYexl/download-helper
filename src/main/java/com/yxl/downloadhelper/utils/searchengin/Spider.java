@@ -1,4 +1,4 @@
-package com.yxl.downloadhelper.web;
+package com.yxl.downloadhelper.utils.searchengin;
 
 import com.yxl.downloadhelper.model.Url;
 import org.jsoup.Connection;

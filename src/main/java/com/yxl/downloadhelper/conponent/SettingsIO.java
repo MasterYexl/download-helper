@@ -1,11 +1,8 @@
 package com.yxl.downloadhelper.conponent;
 
-import com.yxl.downloadhelper.web.TIO;
-import org.springframework.stereotype.Component;
+import com.yxl.downloadhelper.utils.io.TIO;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

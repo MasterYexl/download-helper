@@ -1,7 +1,7 @@
 package com.yxl.downloadhelper.conponent;
 
 import com.yxl.downloadhelper.model.BookStore;
-import com.yxl.downloadhelper.web.TIO;
+import com.yxl.downloadhelper.utils.io.TIO;
 
 import java.io.File;
 import java.io.IOException;

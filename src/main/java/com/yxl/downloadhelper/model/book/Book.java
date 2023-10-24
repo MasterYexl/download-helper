@@ -1,4 +1,4 @@
-package com.yxl.downloadhelper.model;
+package com.yxl.downloadhelper.model.book;
 
 import java.io.Serializable;
 import java.util.ArrayList;

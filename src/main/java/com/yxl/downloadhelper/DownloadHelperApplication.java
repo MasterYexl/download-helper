@@ -1,8 +1,6 @@
 package com.yxl.downloadhelper;
 
 import com.yxl.downloadhelper.conponent.SettingsIO;
-import com.yxl.downloadhelper.web.TIO;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.system.ApplicationHome;

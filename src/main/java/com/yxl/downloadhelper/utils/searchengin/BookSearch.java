@@ -1,13 +1,13 @@
-package com.yxl.downloadhelper.web;
+package com.yxl.downloadhelper.utils.searchengin;
 
-import com.yxl.downloadhelper.model.Book;
-import com.yxl.downloadhelper.model.Chapter;
+import com.yxl.downloadhelper.model.book.Book;
+import com.yxl.downloadhelper.model.book.Chapter;
 import com.yxl.downloadhelper.model.Url;
+import com.yxl.downloadhelper.utils.io.TIO;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Scanner;
