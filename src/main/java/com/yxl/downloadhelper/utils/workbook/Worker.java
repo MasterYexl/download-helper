@@ -4,19 +4,49 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class Worker<D, R> extends Thread {
-    private Assignment<D, R> assignment;
-    private Consumer<Worker<D, R>> taskStartFunction;
-    private Function<D, R> taskFunction;
-    private Consumer<Worker<D, R>> taskEndFunction;
-    private Consumer<Worker<D, R>> failFunction;
-    private Consumer<Worker<D, R>> successFunction;
-    private Consumer<Worker<D, R>> startFunction;
-    private Consumer<Worker<D, R>> endFunction;
-    private Task<D, R> currentTask;
-    private boolean isWorking;
+    protected Assignment<D, R> assignment;
+    protected Consumer<Worker<D, R>> taskStartEvent;
+    protected Function<D, R> workflow;
+    protected Consumer<Worker<D, R>> taskEndEvent;
+    protected Consumer<Worker<D, R>> taskFailEvent;
+    protected Consumer<Worker<D, R>> taskSuccessEvent;
+    protected Consumer<Worker<D, R>> startEvent;
+    protected Consumer<Worker<D, R>> endEvent;
+    protected Task<D, R> currentTask;
+    protected boolean isWorking;
 
-    Worker(Function<D, R> taskFunction) {
-        this.taskFunction = taskFunction;
+    Worker(Function<D, R> workflow) {
+        this.workflow = workflow;
+    }
+    Worker() {
+    }
+
+    protected Function<D, R> workflow() {
+        return workflow;
+    }
+
+    protected Consumer<Worker<D, R>> onStart() {
+        return startEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onEnd() {
+        return endEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskSuccess() {
+        return taskSuccessEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskFail() {
+        return taskFailEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskStart() {
+        return taskStartEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskEnd() {
+        return taskEndEvent;
     }
 
     @Override
@@ -26,7 +56,7 @@ public class Worker<D, R> extends Thread {
 
     public void work() {
         try {
-            executeFunction(startFunction);
+            executeConsumer(startEvent);
             while (true) {
                 if (assignment == null) {
                     return;
@@ -39,45 +69,47 @@ public class Worker<D, R> extends Thread {
             }
             finishWork();
         } finally {
-            executeFunction(endFunction);
+            executeConsumer(onEnd());
         }
     }
 
     public void work(Task<D, R> task) {
         try {
-            executeFunction(startFunction);
+            executeConsumer(onStart());
             work(task, true);
             finishWork();
         } finally {
-            executeFunction(endFunction);
+            executeConsumer(onEnd());
         }
     }
 
-    private void work(Task<D, R> task, boolean endWorking) {
+    protected void work(Task<D, R> task, boolean endWorking) {
         currentTask = task;
         isWorking = true;
         try {
-            executeFunction(taskStartFunction);
-            R result = taskFunction.apply(task.getDetail());
-            task.finishTask(result);
-            executeFunction(successFunction);
+            executeConsumer(onTaskStart());
+            if (task != null) {
+                R result = workflow().apply(task.getDetail());
+                task.finishTask(result);
+            }
+            executeConsumer(onTaskSuccess());
         } catch (Exception e) {
-            executeFunction(failFunction);
+            executeConsumer(onTaskFail());
         } finally {
-            executeFunction(taskEndFunction);
+            executeConsumer(onTaskEnd());
         }
         isWorking = endWorking;
     }
 
-    private void finishWork() {
+    protected void finishWork() {
         isWorking = false;
         currentTask = null;
     }
 
-    private void executeFunction(Consumer<Worker<D, R>> function) {
-        if (function != null) {
+    protected void executeConsumer(Consumer<Worker<D, R>> consumer) {
+        if (consumer != null) {
             try {
-                function.accept(this);
+                consumer.accept(this);
             } catch (Exception e) {
                 e.printStackTrace();
                 isWorking = false;
@@ -89,36 +121,64 @@ public class Worker<D, R> extends Thread {
         return assignment;
     }
 
+    public Consumer<Worker<D, R>> getTaskStartEvent() {
+        return taskStartEvent;
+    }
+
+    public Function<D, R> getWorkflow() {
+        return workflow;
+    }
+
+    public Consumer<Worker<D, R>> getTaskEndEvent() {
+        return taskEndEvent;
+    }
+
+    public Consumer<Worker<D, R>> getTaskFailEvent() {
+        return taskFailEvent;
+    }
+
+    public Consumer<Worker<D, R>> getTaskSuccessEvent() {
+        return taskSuccessEvent;
+    }
+
+    public Consumer<Worker<D, R>> getStartEvent() {
+        return startEvent;
+    }
+
+    public Consumer<Worker<D, R>> getEndEvent() {
+        return endEvent;
+    }
+
     public void setAssignment(Assignment<D, R> assignment) {
         this.assignment = assignment;
     }
 
-    public void setTaskStartFunction(Consumer<Worker<D, R>> taskStartFunction) {
-        this.taskStartFunction = taskStartFunction;
+    public void setTaskStartEvent(Consumer<Worker<D, R>> taskStartEvent) {
+        this.taskStartEvent = taskStartEvent;
     }
 
-    public void setTaskEndFunction(Consumer<Worker<D, R>> taskEndFunction) {
-        this.taskEndFunction = taskEndFunction;
+    public void setTaskEndEvent(Consumer<Worker<D, R>> taskEndEvent) {
+        this.taskEndEvent = taskEndEvent;
     }
 
-    public void setFailFunction(Consumer<Worker<D, R>> failFunction) {
-        this.failFunction = failFunction;
+    public void setTaskFailEvent(Consumer<Worker<D, R>> taskFailEvent) {
+        this.taskFailEvent = taskFailEvent;
     }
 
-    public void setStartFunction(Consumer<Worker<D, R>> startFunction) {
-        this.startFunction = startFunction;
+    public void setStartEvent(Consumer<Worker<D, R>> startEvent) {
+        this.startEvent = startEvent;
     }
 
-    public void setEndFunction(Consumer<Worker<D, R>> endFunction) {
-        this.endFunction = endFunction;
+    public void setEndEvent(Consumer<Worker<D, R>> endEvent) {
+        this.endEvent = endEvent;
     }
 
-    public void setSuccessFunction(Consumer<Worker<D, R>> successFunction) {
-        this.successFunction = successFunction;
+    public void setTaskSuccessEvent(Consumer<Worker<D, R>> taskSuccessEvent) {
+        this.taskSuccessEvent = taskSuccessEvent;
     }
 
-    public void setTaskFunction(Function<D, R> taskFunction) {
-        this.taskFunction = taskFunction;
+    public void setWorkflow(Function<D, R> workflow) {
+        this.workflow = workflow;
     }
 
     public Task<D, R> getCurrentTask() {

@@ -6,6 +6,7 @@ import com.yxl.downloadhelper.utils.workbook.Workbook;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.function.Function;
 
 public class BookDownloadableLinkSearch extends Workbook<Url, Url>{
     BookSearch bookSearch = new BookSearch();
@@ -13,16 +14,15 @@ public class BookDownloadableLinkSearch extends Workbook<Url, Url>{
 
     public BookDownloadableLinkSearch(Url url){
         addTask(url);
-        initFunction();
     }
 
     public BookDownloadableLinkSearch(List<Url> url){
         addTask(url);
-        initFunction();
     }
 
-    private void initFunction() {
-        taskFunction = url1 -> {
+    @Override
+    protected Function<Url, Url> workflow() {
+        return url1 -> {
             String downloadLink = null;
             try {
                 downloadLink = bookSearch.getDownloadLink(url1.getUrl());

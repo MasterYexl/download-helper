@@ -6,7 +6,7 @@ import java.util.function.Function;
 
 public class Assignment<D, R> {
 
-    private List<Task<D, R>> tasks;
+    protected final List<Task<D, R>> tasks = new LinkedList<>();
 
     public int getSize() {
         return tasks.size();
@@ -16,7 +16,6 @@ public class Assignment<D, R> {
         Task<D, R> task = new Task<>();
         task.setDetail(detail);
         task.setCheckFunction(checkFunction);
-        tasks.add(task);
         tasks.add(task);
         return task;
     }

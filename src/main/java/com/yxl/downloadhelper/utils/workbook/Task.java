@@ -3,11 +3,11 @@ package com.yxl.downloadhelper.utils.workbook;
 import java.util.function.Function;
 
 public class Task<D, R> {
-    private D detail;
-    private R result;
-    private int retryTimes = 0;
-    private boolean isFinish = false;
-    private Function<R, Boolean> checkFunction;
+    protected D detail;
+    protected R result;
+    protected int retryTimes = 0;
+    protected boolean isFinish = false;
+    protected Function<R, Boolean> checkFunction;
 
     public D getDetail() {
         return detail;

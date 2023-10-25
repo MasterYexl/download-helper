@@ -1,5 +1,7 @@
 package com.yxl.downloadhelper.utils.workbook;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -10,21 +12,22 @@ import java.util.function.Function;
  * @param <D> 输入类型
  * @param <R> 输出类型
  */
+@Slf4j
 public class Workbook<D, R> {
     protected final List<Task<D, R>> taskList = new LinkedList<>();
     protected final List<Task<D, R>> failTasks = new LinkedList<>();
     protected final List<Task<D, R>> successTasks = new LinkedList<>();
     protected final Assignment<D, R> assignment = new Assignment<>();
     protected final List<Worker<D, R>> workers = new LinkedList<>();
-    protected Consumer<Worker<D, R>> taskStartFunction;
-    protected Function<D, R> taskFunction;
-    protected Consumer<Worker<D, R>> taskEndFunction;
-    protected Consumer<Worker<D, R>> workerFailFunction;
-    protected Consumer<Worker<D, R>> workerSuccessFunction;
-    protected Consumer<Worker<D, R>> workerStartFunction;
-    protected Consumer<Worker<D, R>> workerEndFunction;
-    protected Consumer<Workbook<D, R>> endFunction;
-    protected Consumer<Workbook<D, R>> startFunction;
+    protected Function<D, R> workflow;
+    protected Consumer<Worker<D, R>> taskStartEvent;
+    protected Consumer<Worker<D, R>> taskEndEvent;
+    protected Consumer<Worker<D, R>> taskFailEvent;
+    protected Consumer<Worker<D, R>> taskSuccessEvent;
+    protected Consumer<Worker<D, R>> workerStartEvent;
+    protected Consumer<Worker<D, R>> workerEndEvent;
+    protected Consumer<Workbook<D, R>> endEvent;
+    protected Consumer<Workbook<D, R>> startEvent;
     protected boolean isFinish = false;
     protected int workerNumber = 3;
     protected int taskMaxRetryTimes = 3;
@@ -47,6 +50,42 @@ public class Workbook<D, R> {
         init(taskList, name);
     }
 
+    protected Function<D, R> workflow() {
+        return workflow;
+    }
+
+    protected Consumer<Workbook<D, R>> onStart() {
+        return startEvent;
+    }
+
+    protected Consumer<Workbook<D, R>> onEnd() {
+        return endEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskSuccess() {
+        return taskSuccessEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskFail() {
+        return taskFailEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskStart() {
+        return taskStartEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onTaskEnd() {
+        return taskEndEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onWorkerStart() {
+        return workerStartEvent;
+    }
+
+    protected Consumer<Worker<D, R>> onWorkerEnd() {
+        return workerEndEvent;
+    }
+
     protected void init(List<D> list, String name) {
         this.name = name;
         this.taskList.clear();
@@ -55,104 +94,116 @@ public class Workbook<D, R> {
     }
 
     public void workStart() {
-        try {
-            if (startFunction != null) {
-                startFunction.accept(this);
-            }
-            int currentWorkerNumber = workers.size();
-            for (int i = 0; i < workerNumber - currentWorkerNumber; i++) {
-                workers.add(createWorker());
-            }
-            int minWorkerNumber = Math.min(workerNumber, assignment.getSize());
-            for (int i = 0; i < minWorkerNumber; i++) {
-                workers.get(i).start();
-            }
-        } finally {
-            if (endFunction != null) {
-                endFunction.accept(this);
-            }
+        executeConsumer(onStart(), this);
+        int currentWorkerNumber = workers.size();
+        for (int i = 0; i < workerNumber - currentWorkerNumber; i++) {
+            workers.add(createWorker());
         }
-        
+        int minWorkerNumber = Math.min(workerNumber, assignment.getSize());
+        for (int i = 0; i < minWorkerNumber; i++) {
+            workers.get(i).start();
+        }
     }
 
     public Worker<D, R> createWorker() {
-        Worker<D, R> worker = new Worker<>(taskFunction);
+        Worker<D, R> worker = new Worker<>(workflow());
         worker.setAssignment(assignment);
-        worker.setSuccessFunction(successWorker -> {
-            successTasks.add(successWorker.getCurrentTask());
-            if (workerSuccessFunction != null) {
-                workerSuccessFunction.accept(successWorker);
-            }
-        });
-        worker.setFailFunction(failWorker -> {
-            Task<D, R> currentTask = failWorker.getCurrentTask();
-            int retryTimes = currentTask.getRetryTimes();
-            if (retryTimes < taskMaxRetryTimes) {
-                currentTask.setRetryTimes(retryTimes + 1);
-                assignment.addTask(currentTask);
-            }
-            failTasks.add(currentTask);
-            if (workerFailFunction != null) {
-                workerFailFunction.accept(failWorker);
-            }
-        });
-        worker.setTaskStartFunction(startWorker -> {
-            startTask();
-            if (taskStartFunction != null) {
-                taskStartFunction.accept(startWorker);
-            }
-        });
-        worker.setTaskEndFunction(endWorker -> {
-            finishTask();
-            if (taskEndFunction != null) {
-                taskEndFunction.accept(endWorker);
-            }
-        });
-        worker.setStartFunction(startWorker -> {
-            workerStart();
-            if (workerStartFunction != null) {
-                workerStartFunction.accept(startWorker);
-            }
-        });
-        worker.setEndFunction(endWorker -> {
-            workerEnd();
-            if (workerStartFunction != null) {
-                workerStartFunction.accept(endWorker);
-            }
-        });
+        worker.setTaskSuccessEvent(this::taskSuccess);
+        worker.setTaskFailEvent(this::taskFail);
+        worker.setTaskStartEvent(this::startTask);
+        worker.setTaskEndEvent(this::endTask);
+        worker.setStartEvent(this::workerStart);
+        worker.setEndEvent(this::workerEnd);
         return worker;
     }
 
-    protected void workerStart() {
+    protected void taskFail(Worker<D, R> worker) {
+        taskFail(worker, null);
+    }
+
+    protected void taskFail(Worker<D, R> failWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, failWorker);
+        Task<D, R> currentTask = failWorker.getCurrentTask();
+        int retryTimes = currentTask.getRetryTimes();
+        if (retryTimes < taskMaxRetryTimes) {
+            currentTask.setRetryTimes(retryTimes + 1);
+            assignment.addTask(currentTask);
+        }
+        failTasks.add(currentTask);
+    }
+
+    protected void taskSuccess(Worker<D, R> worker) {
+        taskSuccess(worker, null);
+    }
+
+    protected void taskSuccess(Worker<D, R> successWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, successWorker);
+        successTasks.add(successWorker.getCurrentTask());
+    }
+
+    protected void workerStart(Worker<D, R> worker) {
+        workerStart(worker, null);
+    }
+
+    protected void workerStart(Worker<D, R> startWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, startWorker);
         workingWorkerNumber++;
     }
-    
-    protected void workerEnd() {
+
+    protected void workerEnd(Worker<D, R> worker) {
+        workerEnd(worker, null);
+    }
+
+    protected void workerEnd(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, endWorker);
         workingWorkerNumber--;
         if (workingWorkerNumber == 0) {
             if (assignment.getSize() > 0) {
                 this.workStart();
             } else {
                 isFinish = true;
+                executeConsumer(onEnd(), this);
             }
         }
     }
-    
-    protected void finishTask() {
+
+    protected void endTask(Worker<D, R> worker) {
+        endTask(worker, null);
+    }
+
+    protected void endTask(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, endWorker);
         workingTasksNumber--;
         doneTasksNumber++;
     }
 
-    protected void startTask() {
+    protected void startTask(Worker<D, R> worker) {
+        startTask(worker, null);
+    }
+
+    protected void startTask(Worker<D, R> startWorker, Consumer<Worker<D, R>> extractConsumer) {
+        executeConsumer(extractConsumer, startWorker);
         workingTasksNumber++;
+    }
+
+    private <T> void executeConsumer(Consumer<T> consumer, T arg) {
+        if (consumer != null) {
+            try {
+                consumer.accept(arg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public void addTasks(List<Task<D, R>> tasks) {
         taskList.addAll(assignment.addTask(tasks));
     }
+
     public void addTask(Task<D, R> task) {
         taskList.add(assignment.addTask(task));
     }
+
     public void addTask(D task) {
         taskList.add(assignment.addTask(task, null));
     }
@@ -167,6 +218,10 @@ public class Workbook<D, R> {
 
     public void addTask(List<D> tasks, Function<R, Boolean> checkFunction) {
         taskList.addAll(assignment.addTasks(tasks, checkFunction));
+    }
+
+    public void addWorker(Worker<D, R> worker) {
+        worker.setStartEvent(onWorkerStart());
     }
 
     public boolean isFinish() {
@@ -207,40 +262,40 @@ public class Workbook<D, R> {
         return successTasks;
     }
 
-    public void setTaskStartFunction(Consumer<Worker<D, R>> taskStartFunction) {
-        this.taskStartFunction = taskStartFunction;
+    public void setTaskStartEvent(Consumer<Worker<D, R>> taskStartEvent) {
+        this.taskStartEvent = taskStartEvent;
     }
 
-    public void setTaskFunction(Function<D, R> taskFunction) {
-        this.taskFunction = taskFunction;
+    public void setWorkflow(Function<D, R> workflow) {
+        this.workflow = workflow;
     }
 
-    public void setTaskEndFunction(Consumer<Worker<D, R>> taskEndFunction) {
-        this.taskEndFunction = taskEndFunction;
+    public void setTaskEndEvent(Consumer<Worker<D, R>> taskEndEvent) {
+        this.taskEndEvent = taskEndEvent;
     }
 
-    public void setWorkerFailFunction(Consumer<Worker<D, R>> workerFailFunction) {
-        this.workerFailFunction = workerFailFunction;
+    public void setTaskFailEvent(Consumer<Worker<D, R>> taskFailEvent) {
+        this.taskFailEvent = taskFailEvent;
     }
 
-    public void setWorkerSuccessFunction(Consumer<Worker<D, R>> workerSuccessFunction) {
-        this.workerSuccessFunction = workerSuccessFunction;
+    public void setTaskSuccessEvent(Consumer<Worker<D, R>> taskSuccessEvent) {
+        this.taskSuccessEvent = taskSuccessEvent;
     }
 
-    public void setWorkerStartFunction(Consumer<Worker<D, R>> workerStartFunction) {
-        this.workerStartFunction = workerStartFunction;
+    public void setWorkerStartEvent(Consumer<Worker<D, R>> workerStartEvent) {
+        this.workerStartEvent = workerStartEvent;
     }
 
-    public void setWorkerEndFunction(Consumer<Worker<D, R>> workerEndFunction) {
-        this.workerEndFunction = workerEndFunction;
+    public void setWorkerEndEvent(Consumer<Worker<D, R>> workerEndEvent) {
+        this.workerEndEvent = workerEndEvent;
     }
 
-    public void setEndFunction(Consumer<Workbook<D, R>> endFunction) {
-        this.endFunction = endFunction;
+    public void setEndEvent(Consumer<Workbook<D, R>> endEvent) {
+        this.endEvent = endEvent;
     }
 
-    public void setStartFunction(Consumer<Workbook<D, R>> startFunction) {
-        this.startFunction = startFunction;
+    public void setStartEvent(Consumer<Workbook<D, R>> startEvent) {
+        this.startEvent = startEvent;
     }
 
     @Override
@@ -249,7 +304,7 @@ public class Workbook<D, R> {
     }
 
     public double getProgress() {
-        return (double)doneTasksNumber / taskList.size();
+        return (double) doneTasksNumber / taskList.size();
     }
 
     public int getTot() {
