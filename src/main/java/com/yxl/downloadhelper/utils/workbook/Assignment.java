@@ -2,11 +2,12 @@ package com.yxl.downloadhelper.utils.workbook;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Vector;
 import java.util.function.Function;
 
 public class Assignment<D, R> {
 
-    protected final List<Task<D, R>> tasks = new LinkedList<>();
+    protected final List<Task<D, R>> tasks = new Vector<>();
 
     public int getSize() {
         return tasks.size();

@@ -118,7 +118,7 @@ public class Workbook<D, R> {
     }
 
     protected void taskFail(Worker<D, R> worker) {
-        taskFail(worker, null);
+        taskFail(worker, onTaskFail());
     }
 
     protected void taskFail(Worker<D, R> failWorker, Consumer<Worker<D, R>> extractConsumer) {
@@ -133,7 +133,7 @@ public class Workbook<D, R> {
     }
 
     protected void taskSuccess(Worker<D, R> worker) {
-        taskSuccess(worker, null);
+        taskSuccess(worker, onTaskSuccess());
     }
 
     protected void taskSuccess(Worker<D, R> successWorker, Consumer<Worker<D, R>> extractConsumer) {
@@ -142,7 +142,7 @@ public class Workbook<D, R> {
     }
 
     protected void workerStart(Worker<D, R> worker) {
-        workerStart(worker, null);
+        workerStart(worker, onWorkerStart());
     }
 
     protected void workerStart(Worker<D, R> startWorker, Consumer<Worker<D, R>> extractConsumer) {
@@ -151,7 +151,7 @@ public class Workbook<D, R> {
     }
 
     protected void workerEnd(Worker<D, R> worker) {
-        workerEnd(worker, null);
+        workerEnd(worker, onWorkerEnd());
     }
 
     protected void workerEnd(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
@@ -168,7 +168,7 @@ public class Workbook<D, R> {
     }
 
     protected void endTask(Worker<D, R> worker) {
-        endTask(worker, null);
+        endTask(worker, onTaskEnd());
     }
 
     protected void endTask(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
@@ -178,7 +178,7 @@ public class Workbook<D, R> {
     }
 
     protected void startTask(Worker<D, R> worker) {
-        startTask(worker, null);
+        startTask(worker, onTaskStart());
     }
 
     protected void startTask(Worker<D, R> startWorker, Consumer<Worker<D, R>> extractConsumer) {
