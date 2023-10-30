@@ -15,8 +15,8 @@ import java.util.function.Function;
 @Slf4j
 public class Workbook<D, R> {
     protected final List<Task<D, R>> taskList = new LinkedList<>();
-    protected final List<Task<D, R>> failTasks = new LinkedList<>();
-    protected final List<Task<D, R>> successTasks = new LinkedList<>();
+    protected final List<Task<D, R>> failTasks = new Vector<>();
+    protected final List<Task<D, R>> successTasks = new Vector<>();
     protected final Assignment<D, R> assignment = new Assignment<>();
     protected final List<Worker<D, R>> workers = new LinkedList<>();
     protected Function<D, R> workflow;
@@ -30,11 +30,13 @@ public class Workbook<D, R> {
     protected Consumer<Workbook<D, R>> startEvent;
     protected boolean isFinish = false;
     protected int workerNumber = 3;
-    protected int taskMaxRetryTimes = 3;
+    protected int taskMaxRetryTimes = 2;
     protected static int sequence = 0;
     protected int workingTasksNumber = 0;
     protected int doneTasksNumber = 0;
     protected int workingWorkerNumber = 0;
+    private final Object workingNumberLock = new Object();
+    private final Object doneTaskNumberLock = new Object();
     String name;
 
     public Workbook() {
@@ -95,11 +97,11 @@ public class Workbook<D, R> {
 
     public void workStart() {
         executeConsumer(onStart(), this);
-        int currentWorkerNumber = workers.size();
-        for (int i = 0; i < workerNumber - currentWorkerNumber; i++) {
+        workers.clear();
+        int minWorkerNumber = Math.min(workerNumber, assignment.getSize());
+        for (int i = 0; i < minWorkerNumber; i++) {
             workers.add(createWorker());
         }
-        int minWorkerNumber = Math.min(workerNumber, assignment.getSize());
         for (int i = 0; i < minWorkerNumber; i++) {
             workers.get(i).start();
         }
@@ -128,8 +130,12 @@ public class Workbook<D, R> {
         if (retryTimes < taskMaxRetryTimes) {
             currentTask.setRetryTimes(retryTimes + 1);
             assignment.addTask(currentTask);
+        } else {
+            currentTask.finishTask(null);
         }
-        failTasks.add(currentTask);
+        if (!failTasks.contains(currentTask)) {
+            failTasks.add(currentTask);
+        }
     }
 
     protected void taskSuccess(Worker<D, R> worker) {
@@ -138,7 +144,9 @@ public class Workbook<D, R> {
 
     protected void taskSuccess(Worker<D, R> successWorker, Consumer<Worker<D, R>> extractConsumer) {
         executeConsumer(extractConsumer, successWorker);
-        successTasks.add(successWorker.getCurrentTask());
+        Task<D, R> currentTask = successWorker.getCurrentTask();
+        successTasks.add(currentTask);
+        failTasks.remove(currentTask);
     }
 
     protected void workerStart(Worker<D, R> worker) {
@@ -147,7 +155,9 @@ public class Workbook<D, R> {
 
     protected void workerStart(Worker<D, R> startWorker, Consumer<Worker<D, R>> extractConsumer) {
         executeConsumer(extractConsumer, startWorker);
-        workingWorkerNumber++;
+        synchronized (workingNumberLock) {
+            workingWorkerNumber++;
+        }
     }
 
     protected void workerEnd(Worker<D, R> worker) {
@@ -156,13 +166,15 @@ public class Workbook<D, R> {
 
     protected void workerEnd(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
         executeConsumer(extractConsumer, endWorker);
-        workingWorkerNumber--;
-        if (workingWorkerNumber == 0) {
-            if (assignment.getSize() > 0) {
-                this.workStart();
-            } else {
-                isFinish = true;
-                executeConsumer(onEnd(), this);
+        synchronized (workingNumberLock) {
+            workingWorkerNumber--;
+            if (workingWorkerNumber == 0) {
+                if (assignment.getSize() > 0) {
+                    this.workStart();
+                } else {
+                    isFinish = true;
+                    executeConsumer(onEnd(), this);
+                }
             }
         }
     }
@@ -173,8 +185,12 @@ public class Workbook<D, R> {
 
     protected void endTask(Worker<D, R> endWorker, Consumer<Worker<D, R>> extractConsumer) {
         executeConsumer(extractConsumer, endWorker);
-        workingTasksNumber--;
-        doneTasksNumber++;
+        if (endWorker.currentTask.isFinish) {
+            synchronized (doneTaskNumberLock) {
+                workingTasksNumber--;
+                doneTasksNumber++;
+            }
+        }
     }
 
     protected void startTask(Worker<D, R> worker) {
@@ -300,7 +316,7 @@ public class Workbook<D, R> {
 
     @Override
     public String toString() {
-        return "当前状况:" + (taskList.size() == assignment.getSize() ? "未开始" : isFinish() ? "已完成" : "进行中") + "\n总任务数:" + taskList.size() + "\n当前完成:" + doneTasksNumber + "\n失败数量:" + failTasks.size() + "\n启动的线程数:" + workingWorkerNumber;
+        return "当前状况:" + (taskList.size() == assignment.getSize() ? "未开始" : isFinish() ? "已完成" : "进行中") + ", 总任务数:" + taskList.size() + ", 当前完成:" + doneTasksNumber + ", 成功数量:" + successTasks.size() + ", 失败数量:" + failTasks.size() + ", 启动的线程数:" + workingWorkerNumber;
     }
 
     public double getProgress() {

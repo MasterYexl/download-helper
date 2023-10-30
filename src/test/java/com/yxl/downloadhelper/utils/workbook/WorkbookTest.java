@@ -22,29 +22,31 @@ public class WorkbookTest {
             }
             return num + 1;
         });
-        workbook.setTaskStartEvent(worker -> {
-            System.out.println(worker.getName() + "开始任务");
-        });
-        workbook.setTaskEndEvent(worker -> {
-            System.out.println(worker.getName() + "完成任务");
-        });
-        workbook.setWorkerStartEvent(worker -> {
-            System.out.println(worker.getName() + "开始工作");
-        });
-        workbook.setWorkerEndEvent(worker -> {
-            System.out.println(worker.getName() + "结束工作");
-        });
-        workbook.setStartEvent(args -> {
-            System.out.println("开始工作");
-        });
-        workbook.setEndEvent(args -> {
-            System.out.println("结束工作");
-        });
+//        workbook.setTaskStartEvent(worker -> {
+//            System.out.println(worker.getName() + "开始任务");
+//        });
+//        workbook.setTaskEndEvent(worker -> {
+//            System.out.println(worker.getName() + "完成任务");
+//        });
+//        workbook.setWorkerStartEvent(worker -> {
+//            System.out.println(worker.getName() + "开始工作");
+//        });
+//        workbook.setWorkerEndEvent(worker -> {
+//            System.out.println(worker.getName() + "结束工作");
+//        });
+//        workbook.setStartEvent(args -> {
+//            System.out.println("开始工作");
+//        });
+//        workbook.setEndEvent(args -> {
+//            System.out.println("结束工作");
+//        });
         workbook.workStart();
         while (true) {
             System.out.println(workbook.getProgress());
             System.out.println(workbook);
             if (workbook.isFinish()) {
+                System.out.println(workbook.getProgress());
+                System.out.println(workbook);
                 System.out.println(workbook.getResult());
                 break;
             }
