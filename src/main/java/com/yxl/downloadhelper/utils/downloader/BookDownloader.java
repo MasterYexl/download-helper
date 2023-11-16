@@ -1,11 +1,12 @@
 package com.yxl.downloadhelper.utils.downloader;
 
-import com.yxl.downloadhelper.conponent.SettingsIO;
-import com.yxl.downloadhelper.model.book.Book;
-import com.yxl.downloadhelper.model.book.Chapter;
+import com.yxl.downloadhelper.component.SettingsIO;
+import com.yxl.downloadhelper.model.dto.Book;
+import com.yxl.downloadhelper.model.dto.Chapter;
 import com.yxl.downloadhelper.utils.io.TIO;
-import com.yxl.downloadhelper.utils.searchengin.BookSearch;
+import com.yxl.downloadhelper.component.searchengin.BookSearch;
 import com.yxl.downloadhelper.utils.workbook.Workbook;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.File;
@@ -16,11 +17,12 @@ import java.util.function.Function;
 
 @Slf4j
 public class BookDownloader extends Workbook<Chapter, String>{
+    @Getter
     private final Book book;
     private final BookSearch bookSearch = new BookSearch();
 
     public BookDownloader(Book book, String savePath) {
-        addTask(book.getChapters());
+        addTask(book.getChapterList());
         String name = book.getName();
         for (int i = 0; true; i++) {
             File file = new File(savePath + File.separator + name + (i == 0 ? ".txt" : i + ".txt"));
@@ -50,7 +52,7 @@ public class BookDownloader extends Workbook<Chapter, String>{
                 try {
                     TIO.write(s, SettingsIO.get("book-path") + "/" + workbook.getName() + ".txt");
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    log.error(e.getMessage());
                 }
             }
         };
@@ -68,10 +70,6 @@ public class BookDownloader extends Workbook<Chapter, String>{
                 return "";
             }
         };
-    }
-
-    public Book getBook() {
-        return book;
     }
 
 }

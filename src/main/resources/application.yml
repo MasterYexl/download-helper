@@ -1,0 +1,16 @@
+
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/download_helper
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  mvc:
+  profiles:
+    active: dev
+
+logging:
+  root:
+    level: debug
+server:
+  port: 8081

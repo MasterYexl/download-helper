@@ -1,8 +1,9 @@
 package com.yxl.downloadhelper.utils.downloader;
 
 import com.yxl.downloadhelper.model.Url;
-import com.yxl.downloadhelper.utils.searchengin.BookSearch;
+import com.yxl.downloadhelper.component.searchengin.BookSearch;
 import com.yxl.downloadhelper.utils.workbook.Workbook;
+import lombok.Getter;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.function.Function;
 
 public class BookDownloadableLinkSearch extends Workbook<Url, Url>{
     BookSearch bookSearch = new BookSearch();
+    @Getter
     private Url url;
 
     public BookDownloadableLinkSearch(Url url){
@@ -35,10 +37,6 @@ public class BookDownloadableLinkSearch extends Workbook<Url, Url>{
             }
             return null;
         };
-    }
-
-    public Url getUrl() {
-        return url;
     }
 
 }

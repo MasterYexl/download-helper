@@ -1,9 +1,8 @@
 package com.yxl.downloadhelper.tool;
 
-import com.yxl.downloadhelper.conponent.SettingsIO;
-import com.yxl.downloadhelper.model.book.Book;
-import com.yxl.downloadhelper.utils.searchengin.Spider;
-import org.junit.Test;
+import com.yxl.downloadhelper.component.SettingsIO;
+import com.yxl.downloadhelper.model.dto.Book;
+import com.yxl.downloadhelper.component.searchengin.Spider;
 
 import javax.servlet.http.HttpSession;
 import java.io.*;

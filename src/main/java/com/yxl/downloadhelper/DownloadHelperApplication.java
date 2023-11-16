@@ -1,11 +1,13 @@
 package com.yxl.downloadhelper;
 
-import com.yxl.downloadhelper.conponent.SettingsIO;
+import com.yxl.downloadhelper.component.SettingsIO;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.system.ApplicationHome;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @SpringBootApplication
+@EnableTransactionManagement
 public class DownloadHelperApplication {
 
     public static void main(String[] args) {
