@@ -11,6 +11,7 @@ public class Book {
     private UUID id;
     private String name;
     private Author author;
+    private UUID authorId;
     private Series series;
     private List<Chapter> chapterList;
     private Integer seriesSequence;

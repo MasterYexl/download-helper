@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.UUID;
-import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -19,8 +18,8 @@ public class ChapterEntity extends CommonEntity {
     @Column(name = "id")
     private UUID id;
     @Basic
-    @Column(name = "book_id")
-    private UUID bookId;
+    @Column(name = "book_source_id")
+    private UUID bookSourceId;
     @Basic
     @Column(name = "seq")
     private int sequence;
@@ -33,4 +32,7 @@ public class ChapterEntity extends CommonEntity {
     @Basic
     @Column(name = "update_time")
     private Timestamp updateTime;
+    @Basic
+    @Column(name = "url")
+    private String url;
 }

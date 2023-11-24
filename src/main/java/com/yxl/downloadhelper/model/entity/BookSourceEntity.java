@@ -6,8 +6,7 @@ import lombok.EqualsAndHashCode;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
-import java.util.Objects;
-import java.util.UUID;import java.util.UUID;
+import java.util.UUID;
 
 @EqualsAndHashCode(callSuper = true)
 @Entity
@@ -37,6 +36,6 @@ public class BookSourceEntity extends CommonEntity {
     @Column(name = "update_time")
     private Timestamp updateTime;
     @Basic
-    @Column(name = "path")
-    private String path;
+    @Column(name = "url")
+    private String url;
 }

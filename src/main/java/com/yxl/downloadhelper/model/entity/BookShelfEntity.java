@@ -21,8 +21,8 @@ public class BookShelfEntity extends CommonEntity {
     @Column(name = "usr_id")
     private UUID usrId;
     @Basic
-    @Column(name = "book_id")
-    private UUID bookId;
+    @Column(name = "book_source_id")
+    private UUID bookSourceId;
     @Basic
     @Column(name = "reading_book_seq")
     private Integer readingBookSequence;

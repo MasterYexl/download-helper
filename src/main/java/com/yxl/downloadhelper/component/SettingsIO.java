@@ -15,7 +15,7 @@ public class SettingsIO {
     static File settingFile;
     static Map<String, String> map = new HashMap<>();
 
-    public static void init(String path) throws Exception {
+    public static void  init(String path) throws Exception {
         systemPath = path;
         bookPath = systemPath+File.separator+"books";
         binPath = bookPath+File.separator+"bin";

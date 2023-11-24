@@ -8,7 +8,7 @@ import java.util.UUID;
 @Data
 public class Chapter {
     private UUID id;
-    private UUID bookId;
+    private UUID bookSourceId;
     private int sequence;
     private String url;
     private String title;

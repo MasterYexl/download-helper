@@ -47,6 +47,6 @@ public class ChapterService extends CommonService<ChapterEntity> {
     }
 
     public List<ChapterEntity> getByBookId(UUID bookID) {
-        return chapterRepository.getByBookId(bookID);
+        return chapterRepository.getByBookSourceId(bookID);
     }
 }

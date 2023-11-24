@@ -1,5 +1,6 @@
 package com.yxl.downloadhelper.component.searchengin;
 
+import com.yxl.downloadhelper.model.dto.Author;
 import com.yxl.downloadhelper.model.dto.Book;
 import com.yxl.downloadhelper.model.dto.Chapter;
 import com.yxl.downloadhelper.model.Url;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class BookSearch {
@@ -65,13 +68,14 @@ public class BookSearch {
     }
 
     //解析目录
-    public Book parseCatalog(String url) throws IOException {
-        Element element = spider.getElement(url);
+    public Book parseBook(String url) throws IOException {
+        Element element = spider.getElement(url).getElementsByTag("html").get(0);
         //越往后精确度越低
         String[] tags = {"li", "span", "a"};
         Book book = new Book();
         book.setName(parseTitle(element));
         verifyName(book);
+        createAuthor(book, parseAuthor(element), "");
         for (String tag : tags) {
             Elements li = element.select(tag);
             if (li.isEmpty()) continue;
@@ -91,7 +95,7 @@ public class BookSearch {
                     if (a.isEmpty()) continue;
                     //获取真实地址
                     if (realUrl == null) realUrl = Spider.getRealUrl(url);
-                    chapter.setContent(parseHref(realUrl, a.get(0).attr("href")));
+                    chapter.setUrl(parseHref(realUrl, a.get(0).attr("href")));
                     size++;
                     chapters.add(chapter);
                 }
@@ -146,6 +150,39 @@ public class BookSearch {
         return name;
     }
 
+    public void createAuthor(Book book, String authorName, String description) {
+        Author author = new Author();
+        author.setName(authorName);
+        author.setDescription(description);
+        book.setAuthor(author);
+    }
+
+    public String parseAuthor(Element page) {
+        Element authorElement = findElement(page, "作 *者.*\\w+");
+        Pattern compile = Pattern.compile(".*作 *者.*?(\\w+)");
+        if (authorElement != null) {
+            Matcher matcher = compile.matcher(authorElement.text());
+            if (matcher.find()) {
+                return matcher.group(1);
+            }
+        }
+        return "";
+    }
+
+    private Element findElement(Element element, String reg) {
+        if (!element.text().matches(".*"+reg+".*")) {
+            return null;
+        }
+        Elements children = element.children();
+        for (Element child : children) {
+            Element result = findElement(child, reg);
+            if (result != null) {
+                return result;
+            }
+        }
+        return element;
+    }
+
     //解析内容
     public String parseContent(String url, boolean html) throws IOException {
         Element element = spider.getElement(url);
@@ -169,7 +206,7 @@ public class BookSearch {
         String finalContent = content.text();
         if (finalContent.isEmpty()) finalContent = tmp.text();
         String[] analyze = finalContent.split(" ");
-        StringBuilder stringBuilder = new StringBuilder("");
+        StringBuilder stringBuilder = new StringBuilder();
         int st = 0, ed = analyze.length - 1;
         for (String line : analyze) {
             if (line.matches(".*[。！？”.?!\"']")) break;

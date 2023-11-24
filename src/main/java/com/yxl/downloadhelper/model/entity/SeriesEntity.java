@@ -21,9 +21,6 @@ public class SeriesEntity extends CommonEntity {
     @Column(name = "nm")
     private String name;
     @Basic
-    @Column(name = "author_id")
-    private UUID authorId;
-    @Basic
     @Column(name = "dscp")
     private String description;
     @Basic

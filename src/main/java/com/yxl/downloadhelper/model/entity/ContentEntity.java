@@ -37,7 +37,4 @@ public class ContentEntity extends CommonEntity {
     @Basic
     @Column(name = "url")
     private String url;
-    @Basic
-    @Column(name = "book_source_id")
-    private byte[] bookSourceId;
 }

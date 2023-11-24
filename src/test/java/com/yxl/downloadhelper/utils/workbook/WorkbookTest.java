@@ -53,4 +53,10 @@ public class WorkbookTest {
             Thread.sleep(10);
         }
     }
+
+    @Test
+    public void testURL() {
+        String url = "https://www.52bqg.org/book_10049/5027452.html";
+        System.out.println(url.replaceAll("^(.*//)?[^/]+", ""));
+    }
 }

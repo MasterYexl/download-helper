@@ -5,9 +5,13 @@ import com.yxl.downloadhelper.common.model.jpa.CommonRepository;
 import com.yxl.downloadhelper.common.service.CommonService;
 import com.yxl.downloadhelper.component.searchengin.BookSearch;
 import com.yxl.downloadhelper.model.Url;
+import com.yxl.downloadhelper.model.dto.Author;
 import com.yxl.downloadhelper.model.dto.Book;
+import com.yxl.downloadhelper.model.dto.BookSource;
 import com.yxl.downloadhelper.model.dto.Chapter;
+import com.yxl.downloadhelper.model.entity.AuthorEntity;
 import com.yxl.downloadhelper.model.entity.BookEntity;
+import com.yxl.downloadhelper.model.entity.BookSourceEntity;
 import com.yxl.downloadhelper.model.entity.WebsiteEntity;
 import com.yxl.downloadhelper.repository.BookRepository;
 import com.yxl.downloadhelper.utils.downloader.BookDownloadableLinkSearch;
@@ -17,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -29,6 +34,7 @@ public class BookService extends CommonService<BookEntity> {
     private final WebsiteService websiteService;
     private final ContentService contentService;
     private final BookSourceService bookSourceService;
+    private final AuthorService authorService;
     private final BookSearch bookSearch;
 
     public String searchBook(String bookName) {
@@ -80,9 +86,14 @@ public class BookService extends CommonService<BookEntity> {
         return null;
     }
 
+    public List<Book> getBooks(String name) {
+        return null;
+    }
+
+    @Transactional
     public Book parseBookWithUrl(String url) {
         try {
-            Book book = bookSearch.parseCatalog(url);
+            Book book = bookSearch.parseBook(url);
             saveBookWithoutContent(book);
             return book;
         } catch (IOException e) {
@@ -93,16 +104,33 @@ public class BookService extends CommonService<BookEntity> {
 
     @Transactional
     public void saveBookWithoutContent(Book book) {
-        ResponseTemplate<BookEntity> bookSaved = addObject(book);
-        BookEntity bookEntity = bookSaved.getDetail();
+        Author author = book.getAuthor();
+        AuthorEntity authorEntity = authorService.addAuthor(author);
+        author.setId(authorEntity.getId());
+        BookEntity bookEntity = addOrGetBook(book);
         book.setId(bookEntity.getId());
-        List<Chapter> chapterList = book.getChapterList();
-        for (Chapter chapter : chapterList) {
-            chapter.setBookId(bookEntity.getId());
-        }
-        chapterService.addAllObject(chapterList);
         WebsiteEntity website = websiteService.add(book.getUrl(), null);
-        bookSourceService.add(book, website);
+        BookSource source = bookSourceService.add(book, website.getId());
+        List<Chapter> chapterList = book.getChapterList();
+        List<Chapter> newChapterList = new ArrayList<>();
+        int startSeq = source.isNew()? 0 : source.getNewSequence() + 1;
+        for (int i = startSeq; i < chapterList.size(); i++) {
+            Chapter chapter = chapterList.get(i);
+            chapter.setBookSourceId(source.getId());
+            newChapterList.add(chapter);
+        }
+        chapterService.addAllObject(newChapterList);
+    }
+
+    public BookEntity addOrGetBook(Book book) {
+        String name = book.getName();
+        Author author = book.getAuthor();
+        BookEntity entity = bookRepository.getFirstByAuthorIdAndName(author.getId(), name);
+        if (entity == null) {
+            book.setAuthorId(author.getId());
+            entity = addObject(book).getDetail();
+        }
+        return entity;
     }
 
     @Override

@@ -13,6 +13,7 @@ public class BookSource {
     private String path;
     private Integer newSequence;
     private String newChapter;
+    private boolean isNew;
     private Timestamp createTime;
     private Timestamp updateTime;
 }

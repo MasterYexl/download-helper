@@ -5,6 +5,9 @@ import com.yxl.downloadhelper.model.entity.BookShelfEntity;
 import com.yxl.downloadhelper.model.entity.BookSourceEntity;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public interface BookSourceRepository extends CommonRepository<BookSourceEntity> {
+    public BookSourceEntity getByBookIdAndWebsiteId(UUID bookID, UUID websiteID);
 }
